@@ -4,4 +4,15 @@
 
 {% block content %}
     <h1>TASK</h1>
+    <h2>To Do</h2>
+    <ul>
+        {% for task in toDoTasks %}
+        <li>
+            <h3>{{task.title}}</h2>
+            <p>{{task.description}}</p>
+            <p class="{% if task.priority == 'low' %} text-success {% elif task.priority == 'Medium' %} text-warning {% else %} text-danger {% endif %}">{{task.priority}}</p>
+            <p><b>{{task.user.username}}</b></p>
+        </li>
+        {% endfor %}
+    </ul>
 {% endblock %}

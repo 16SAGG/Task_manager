@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from .forms import TaskForm
+from .models import Task
 
 def home(request):
     return render(request, 'home.html', {})
@@ -36,7 +37,11 @@ def signup(request):
             return render(request, 'signup.html', ctxt)
 
 def tasks(request):
-    return render(request, 'tasks.html')
+    toDoTasks = Task.objects.filter(user = request.user, completionDate__isnull = True)
+    ctxt = {
+        'toDoTasks': toDoTasks,
+    }
+    return render(request, 'tasks.html', ctxt)
 
 def createTasks(request):
     if request.method == 'GET':
