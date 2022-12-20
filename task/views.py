@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from .forms import TaskForm
 from .models import Task
+from django.shortcuts import get_object_or_404
 
 def home(request):
     return render(request, 'home.html', {})
@@ -66,6 +66,29 @@ def createTasks(request):
                 'advice': 'Please provide valid data'
             }
             return render(request, 'create_tasks.html', ctxt)
+
+def taskDetail(request, taskId):
+    if request.method == 'GET':
+        myTask = get_object_or_404(Task, pk = taskId, user = request.user)
+        form = TaskForm(instance = myTask)
+        ctxt = {
+            'myTask': myTask,
+            'form': form,
+        }
+        return render(request, 'task_detail.html', ctxt)
+    else:
+        try:
+            myTask = get_object_or_404(Task, pk = taskId, user = request.user)
+            form = TaskForm(request.POST, instance = myTask)
+            form.save()
+            return redirect('tasks')
+        except ValueError:
+            ctxt = {
+                'myTask': myTask,
+                'form': form,
+                'advice': 'Error updating task',
+            }
+            return render(request, 'task_detail.html', ctxt)
 
 def signout(request):
     logout(request)

@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+
+{% block title%}{{myTask.title}}{% endblock %}
+
+{% block content %}
+    <h1>{{myTask.title}}</h1>
+    <form method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button>Update</button>
+    </form>
+{% endblock %}
