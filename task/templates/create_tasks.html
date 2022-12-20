@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+
+{% block title%}Home{% endblock %}
+
+{% block content %}
+    <h1>Create</h1>
+    {{advice}}
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button>Create</button>
+    </form>
+{% endblock %}
