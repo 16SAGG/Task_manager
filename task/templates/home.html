@@ -3,5 +3,17 @@
 {% block title%}Home{% endblock %}
 
 {% block content %}
-    <h1>HOME</h1>
+    {% if user.is_authenticated %}
+        <h1>User is_authenticated</h1>
+    {% else %}
+        <div class="row align-items-start my-5">    
+            <div class="col">
+                <h1 class="display-3 fw-semibold mb-3">A Workspace <br>for Everyone.</h1>
+                <p class="fs-4 text-secondary mb-3">Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim error aut fugiat consequuntur corporis iusto doloremque, a ducimus porro quas nemo autem nihil laboriosam in neque exercitationem, sint quod! Iure!</p>
+                <a href="{% url 'signin' %}" class="btn btn-primary fw-semibold fs-5 px-5">Start it up</a>
+            </div>
+            <div class="col">
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

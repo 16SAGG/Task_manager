@@ -13,7 +13,19 @@
             <a href="{% url 'taskDetail' task.id %}">
                 <h3>{{task.title}}</h2>
                 <p>{{task.description}}</p>
-                <p class="{% if task.priority == 'low' %} text-success {% elif task.priority == 'Medium' %} text-warning {% else %} text-danger {% endif %}">{{task.priority}}</p>
+                <p class="{% if task.priority == 'High' %} text-danger {% elif task.priority == 'Medium' %} text-warning {% else %} text-success {% endif %}">{{task.priority}}</p>
+                <p><b>{{task.user.username}}</b></p>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    <h2>Done</h2>
+    <ul>
+        {% for task in doneTasks %}
+        <li>
+            <a href="{% url 'taskDetail' task.id %}">
+                <h3>{{task.title}}</h2>
+                <p>{{task.description}}</p>
                 <p><b>{{task.user.username}}</b></p>
             </a>
         </li>

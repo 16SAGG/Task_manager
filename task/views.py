@@ -6,6 +6,8 @@ from django.db import IntegrityError
 from .forms import TaskForm
 from .models import Task
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     return render(request, 'home.html', {})
@@ -36,13 +38,17 @@ def signup(request):
             }
             return render(request, 'signup.html', ctxt)
 
+@login_required
 def tasks(request):
     toDoTasks = Task.objects.filter(user = request.user, completionDate__isnull = True)
+    doneTasks = Task.objects.filter(user = request.user, completionDate__isnull = False).order_by('-completionDate')
     ctxt = {
         'toDoTasks': toDoTasks,
+        'doneTasks': doneTasks,
     }
     return render(request, 'tasks.html', ctxt)
 
+@login_required
 def createTasks(request):
     if request.method == 'GET':
         ctxt = {
@@ -67,6 +73,7 @@ def createTasks(request):
             }
             return render(request, 'create_tasks.html', ctxt)
 
+@login_required
 def taskDetail(request, taskId):
     if request.method == 'GET':
         myTask = get_object_or_404(Task, pk = taskId, user = request.user)
@@ -90,21 +97,41 @@ def taskDetail(request, taskId):
             }
             return render(request, 'task_detail.html', ctxt)
 
+@login_required
+def taskCompleted(request, taskId):
+    if request.method == 'POST':
+        myTask = get_object_or_404(Task, pk = taskId, user = request.user)
+        myTask.completionDate = timezone.now()
+        myTask.save()
+        return redirect('tasks')
+
+@login_required
+def taskUncomplete(request, taskId):
+    if request.method == 'POST':
+        myTask = get_object_or_404(Task, pk = taskId, user = request.user)
+        myTask.completionDate = None
+        myTask.save()
+        return redirect('tasks')
+
+@login_required
+def taskDeleted(request, taskId):
+    if request.method == 'POST':
+        myTask = get_object_or_404(Task, pk = taskId, user = request.user)
+        myTask.delete()
+        return redirect('tasks')
+
+@login_required
 def signout(request):
     logout(request)
     return redirect('home')
 
 def signin(request):
     if request.method == 'GET':
-        ctxt = {
-            'form': AuthenticationForm,
-        }
-        return render(request, 'signin.html', ctxt)
+        return render(request, 'signin.html')
     else:
         user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
         if user is None:
             ctxt = {
-            'form': AuthenticationForm,
             'advice': 'User or password is incorrect',
             }
             return render(request, 'signin.html', ctxt)

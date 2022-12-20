@@ -9,4 +9,19 @@
         {{form.as_p}}
         <button>Update</button>
     </form>
+    {% if myTask.completionDate %}
+        <form action="{% url 'taskUncomplete' myTask.id %}" method="POST">
+            {% csrf_token %}
+            <button>Uncomplete</button>
+        </form>
+    {% else %}
+        <form action="{% url 'taskCompleted' myTask.id %}" method="POST">
+            {% csrf_token %}
+            <button>Complete</button>
+        </form>
+    {% endif %}
+    <form action="{% url 'taskDeleted' myTask.id %}" method="POST">
+        {% csrf_token %}
+        <button>Delete</button>
+    </form>
 {% endblock %}
