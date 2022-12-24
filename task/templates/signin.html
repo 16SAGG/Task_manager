@@ -2,21 +2,22 @@
 
 {% block title%}Log in{% endblock %}
 
-{% block content %}
-    <form method="POST" class="d-grid gap-2 col-3 position-absolute top-50 start-50 translate-middle">
-        <h1 class="display-5 fw-bold mb-4 text-center">Log in</h1>
-        {{advice}}
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="username" class="fs-6 text-secondary">Username</label>
-            <input type="text" name="username" id="username" class="form-control" placeholder="Enter your username">
-        </div>
-        <div class="mb-3">
-            <label for="password" class="fs-6 text-secondary">Password</label>
-            <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password">
-        </div>
-        <button class="btn btn-primary fw-semibold fs-6 ">Continue with user</button>
-        <hr>
-        <p class="text-center">If you don't have an account. <a class="link-primary" href="{% url 'signup' %}">Create account</a></p>
-    </form>
-{% endblock %}
+
+    {% block content %}
+        <form method="POST" class="d-grid gap-2 col-3 position-absolute top-50 start-50 translate-middle">
+            <h1 class="display-5 fw-bold mb-4 text-center">Log in</h1>
+            {{advice}}
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="username" class="fs-6 text-secondary">Username</label>
+                <input type="text" name="username" id="username" class="form-control" placeholder="Enter your username">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="fs-6 text-secondary">Password</label>
+                <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password">
+            </div>
+            <button class="btn btn-primary fw-semibold fs-6 ">Continue with user</button>
+            <hr>
+            <p class="text-center">If you don't have an account. <a class="link-primary" href="{% url 'signup' %}">Create account</a></p>
+        </form>
+    {% endblock %}

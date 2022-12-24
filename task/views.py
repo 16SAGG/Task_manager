@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from .forms import TaskForm
-from .models import Task
+from .models import Task, Status
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
@@ -12,47 +12,26 @@ from django.contrib.auth.decorators import login_required
 def home(request):
     return render(request, 'home.html', {})
 
-def signup(request):
-    if request.method == 'GET':
-        ctxt = {
-            'form': UserCreationForm,
-        }
-        return render(request, 'signup.html', ctxt)
-    else:
-        if request.POST['password1'] == request.POST['password2']:
-            try:
-                newUser = User.objects.create_user(username=request.POST['username'], password=request.POST['password1'])
-                newUser.save()
-                login(request, newUser)
-                return redirect('tasks')
-            except IntegrityError:
-                ctxt = {
-                    'form': UserCreationForm,
-                    'advice': "User already exists"
-                }
-                return render(request, 'signup.html', ctxt)
-        else:
-            ctxt = {
-                    'form': UserCreationForm,
-                    'advice': "Password don't match"
-            }
-            return render(request, 'signup.html', ctxt)
-
 @login_required
 def tasks(request):
-    toDoTasks = Task.objects.filter(user = request.user, completionDate__isnull = True)
-    doneTasks = Task.objects.filter(user = request.user, completionDate__isnull = False).order_by('-completionDate')
+    tasks = Task.objects.filter(user = request.user)
+    status = Status.objects.filter(user = request.user)
     ctxt = {
-        'toDoTasks': toDoTasks,
-        'doneTasks': doneTasks,
+        'myTasks': tasks,
+        'myStatus': status,
     }
-    return render(request, 'tasks.html', ctxt)
+    return render(request, 'tasks_list.html', ctxt)
 
 @login_required
 def createTasks(request):
+    deadlineChoices = Task.deadlineChoices
+    priorityChoices = Task.priorityChoices
+    status = Status.objects.filter(user = request.user)
     if request.method == 'GET':
         ctxt = {
-            'form': TaskForm
+            'myStatus': status,
+            'deadlineChoices': deadlineChoices,
+            'priorityChoices': priorityChoices,
         }
         return render(request, 'create_tasks.html', ctxt)
     else:
@@ -61,14 +40,10 @@ def createTasks(request):
             newTask = form.save(commit = False)
             newTask.user = request.user
             newTask.save()
-            ctxt = {
-                'form': TaskForm,
-                'advice': 'Task has been created successfully'
-            }
-            return render(request, 'create_tasks.html', ctxt)
+            return redirect('tasks')
         except ValueError:
             ctxt = {
-                'form': TaskForm,
+                'myStatus': status,
                 'advice': 'Please provide valid data'
             }
             return render(request, 'create_tasks.html', ctxt)
@@ -76,13 +51,18 @@ def createTasks(request):
 @login_required
 def taskDetail(request, taskId):
     if request.method == 'GET':
+        deadlineChoices = Task.deadlineChoices
+        priorityChoices = Task.priorityChoices
+        status = Status.objects.filter(user = request.user)
         myTask = get_object_or_404(Task, pk = taskId, user = request.user)
-        form = TaskForm(instance = myTask)
         ctxt = {
             'myTask': myTask,
-            'form': form,
+            'myStatus': status,
+            'taskDetail': True,
+            'deadlineChoices': deadlineChoices,
+            'priorityChoices': priorityChoices,
         }
-        return render(request, 'task_detail.html', ctxt)
+        return render(request, 'create_tasks.html', ctxt)
     else:
         try:
             myTask = get_object_or_404(Task, pk = taskId, user = request.user)
@@ -90,12 +70,19 @@ def taskDetail(request, taskId):
             form.save()
             return redirect('tasks')
         except ValueError:
+            deadlineChoices = Task.deadlineChoices
+            priorityChoices = Task.priorityChoices
+            status = Status.objects.filter(user = request.user)
+            myTask = get_object_or_404(Task, pk = taskId, user = request.user)
             ctxt = {
                 'myTask': myTask,
-                'form': form,
-                'advice': 'Error updating task',
+                'myStatus': status,
+                'taskDetail': True,
+                'deadlineChoices': deadlineChoices,
+                'priorityChoices': priorityChoices,
+                'Advice': 'Error updating task.'
             }
-            return render(request, 'task_detail.html', ctxt)
+            return render(request, 'create_tasks.html', ctxt)
 
 @login_required
 def taskCompleted(request, taskId):
@@ -138,3 +125,42 @@ def signin(request):
         else:
             login(request, user)
             return redirect('tasks')
+
+def signup(request):
+    if request.method == 'GET':
+        ctxt = {
+            'form': UserCreationForm,
+        }
+        return render(request, 'signup.html', ctxt)
+    else:
+        minPasswordSize = 8
+        if request.POST['username'] and len(request.POST['password1']) >= minPasswordSize and request.POST['password1'] == request.POST['password2']:
+            try:
+                newUser = User.objects.create_user(username=request.POST['username'], password=request.POST['password1'])
+                newUser.save()
+                login(request, newUser)
+                return redirect('tasks')
+            except IntegrityError:
+                ctxt = {
+                    'form': UserCreationForm,
+                    'advice': "User already exists."
+                }
+                return render(request, 'signup.html', ctxt)
+        else:
+            if request.POST['username'] == '':
+                ctxt = {
+                        'form': UserCreationForm,
+                        'advice': "Username cant'be a void value."
+                }
+            elif len(request.POST['password1']) < minPasswordSize:
+                ctxt = {
+                        'form': UserCreationForm,
+                        'advice': "Use at least eigth characters in the password."
+                }
+            elif request.POST['password1'] != request.POST['password2']:
+                ctxt = {
+                        'form': UserCreationForm,
+                        'advice': "Password don't match."
+                }
+            return render(request, 'signup.html', ctxt)
+

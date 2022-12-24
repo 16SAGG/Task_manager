@@ -1,3 +1,41 @@
-a{
-    text-decoration: none;
+::-webkit-scrollbar {
+  width: 6px;
 }
+  
+  /* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 10px #DADBE2; 
+  border-radius: 10px;
+}
+   
+  /* Handle */
+::-webkit-scrollbar-thumb {
+  background: #BFC4CE; 
+  border-radius: 10px;
+}
+
+.tsk-input{
+  border: 0; 
+  outline: none;
+}
+
+.card > .overflow-auto{
+  max-height:23em;
+  padding: 0em 1em;
+  overflow-x: hidden;
+}
+
+.overflow-auto > .container{
+  overflow-x: hidden;
+}
+
+.testimonial-group > .row {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.testimonial-group > .row > .col-3 {
+  display: inline-grid;
+  background: #EBECF0;
+}
+

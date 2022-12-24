@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block title%}Tasks{% endblock %}
+
+{% block content %}
+    <div class="container testimonial-group">
+        <div class="row text-center">
+            {% for status in myStatus %}
+                <div class="col-3 card mb-4">
+                    <h2 class="fs-4 mt-3">{{status.title}}</h3>
+                    <div class="overflow-auto">
+                        {% for task in myTasks %}
+                            {% if status.id == task.status.id %}
+                            <a href="{% url 'taskDetail' task.id %}" class="text-dark" style="text-decoration: none;">
+                                <div class="card container py-2 my-2 ">
+                                    <h3 class="fs-6 fw-normal">{{task.title}}</h3>
+                                </div>
+                            </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <hr>
+                    <form action="{% url 'createTasks' %}">
+                        <button class="btn">New task</button>
+                    </form>
+                </div> 
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
