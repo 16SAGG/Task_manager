@@ -14,13 +14,8 @@
   border-radius: 10px;
 }
 
-.tsk-input{
-  border: 0; 
-  outline: none;
-}
-
 .card > .overflow-auto{
-  max-height:23em;
+  max-height:15em;
   padding: 0em 1em;
   overflow-x: hidden;
 }

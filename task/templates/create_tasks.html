@@ -1,17 +1,17 @@
 {% extends 'layout.html' %}
 
-{% block title%}{{myTask.title}} - Task{% endblock %}
+{% block title%}{{myTask.title}} - Task - {% endblock %}
 
-    {% block content %}
+{% block content %}
     <div class="row justify-content-center">
-        <form action="{% if taskDetail %} {% url 'taskDetail' myTask.id %} {% else %} {% url 'createTasks' %} {% endif %}" method="POST" class="col-7">   
+        <form action="{% if taskDetail %} {% url 'taskDetail' myTask.id %} {% else %} {% url 'createTasks' choiceStatId %} {% endif %}" method="POST" class="col-7">   
                 {{advice}}
                 {% csrf_token %}
                 <div class="mb-3">
                     {% if taskDetail %} <!--This code only run through taskDetail-->
-                        <input type="text" name="title" id="title" class="h1" style="border: 0; outline: none;" placeholder="Untitled"; value="{{myTask.title}}">
-                    {% else %} <!--This code only run through createTask-->
-                        <input type="text" name="title" id="title" class="h1" style="border: 0; outline: none;" placeholder="Untitled">
+                        <input type="text" name="title" id="title" class="h1 border-0" maxlength="34" style="width: 100%;" placeholder="Untitled"; value="{{myTask.title}}">
+                        {% else %} <!--This code only run through createTask-->
+                        <input type="text" name="title" id="title" class="h1 border-0" maxlength="34" style="width: 100%;" placeholder="Untitled">
                     {% endif %}
                 </div>
                 <div class="mb-3">
@@ -21,15 +21,15 @@
                                 <label for="status" class="fs-6 text-secondary">Status</label>
                             </div>
                             <div class="row">
-                                <label for="deadline" class="fs-6 text-secondary">Deadline</label>
+                                <label for="priority" class="fs-6 text-secondary">Priority</label>
                             </div>
                             <div class="row">
-                                <label for="priority" class="fs-6 text-secondary">Priority</label>
+                                <label for="deadline" class="fs-6 text-secondary">Deadline</label>
                             </div>
                         </div> 
                         <div class="col">
                             <div class="row">
-                                <select name="status" class="fs-6" style="border: 0; outline: none" id="status">
+                                <select name="status" class="fs-6 border-0" id="status">
                                     {% for status in myStatus %}
                                         {% if taskDetail %} <!--This code only run through taskDetail-->
                                             {% if myTask.status.id == status.id %}
@@ -38,24 +38,15 @@
                                                 <option value="{{status.id}}">{{status.title}}</option>
                                             {% endif %}
                                         {% else %} <!--This code only run through createTask-->
-                                            <option value="{{status.id}}">{{status.title}}</option>
-                                        {% endif %}
-                                    {% endfor %}
-                                </select>
-                                <select name="deadline" class="fs-6" style="border: 0; outline: none" id="deadline">
-                                    {% for val, desc in deadlineChoices %}
-                                        {% if taskDetail %} <!--This code only run through taskDetail-->
-                                            {% if myTask.deadline == val %}
-                                                <option value="{{val}}" selected>{{desc}}</option>
+                                            {% if choiceStatId == status.id %}
+                                                <option value="{{status.id}}" selected>{{status.title}}</option>
                                             {% else %}
-                                                <option value="{{val}}">{{desc}}</option>
+                                                <option value="{{status.id}}">{{status.title}}</option>
                                             {% endif %}
-                                        {% else %} <!--This code only run through createTask-->
-                                            <option value="{{val}}">{{desc}}</option>
                                         {% endif %}
                                     {% endfor %}
                                 </select>
-                                <select name="priority" class="fs-6" style="border: 0; outline: none" id="priority">
+                                <select name="priority" class="fs-6 border-0" id="priority">
                                     {% for val, desc in priorityChoices %}
                                         {% if taskDetail %} <!--This code only run through taskDetail-->
                                             {% if myTask.priority == val %}
@@ -68,18 +59,37 @@
                                         {% endif %}
                                     {% endfor %}
                                 </select>
+                                {% if taskDetail %}
+                                    <input name="deadline" id="deadline" class="fs-6 border-0 ps-3 pe-1" min="{{formatMinDate}}" type="date" value="{{formatDeadline}}">
+                                {% else %}
+                                    <input name="deadline" id="deadline" class="fs-6 border-0" min="{{formatMinDate}}" type="date">
+                                {% endif %}
                             </div>
                         </div> 
                     </div>
                 </div>
                 <hr>
             <div class="mb-3">
-                <textarea name="description" id="description" class="fs-5 tsk-input" style="border: 0; outline: none; width: 100%; height: 9em; resize:none;" placeholder="Description">{% if taskDetail %}{{myTask.description}}{% endif %}</textarea>
+                <textarea name="description" id="description" class="fs-5 tsk-input border-0" maxlength="1080" style="width: 100%; height: 9em; resize:none;" placeholder="Description">{% if taskDetail %}{{myTask.description}}{% endif %}</textarea>
             </div>
             <hr>
-            <div class="d-grid gap-2 d-md-flex justify-content-center">
-                <button class="btn btn-dark" style="width: 10em;">{% if taskDetail %}Update{% else %}Create{% endif %}</button>
+            <div class="container text-center">
+                <div class="row">
+                    <a class="col-1 btn btn-light bg-body mx-5" href="{% url 'tasks' %}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                        </svg>
+                    </a>
+                    <button class="col btn btn-dark mx-5">{% if taskDetail %}Update{% else %}Create{% endif %}</button>
+                    {% if taskDetail %}
+                        <a class="col-1 btn btn-light bg-body mx-5" href="{% url 'taskDeleted' myTask.id %}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/>
+                            </svg>
+                        </a>
+                    {% endif %}
+                </div>
             </div>
         </form>
     </div>
-    {% endblock %}
+{% endblock %}
