@@ -28,6 +28,13 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+GLOBAL_SETTINGS = {
+    'TITLE_TEXT_INPUT' : 34,
+    'AREA_TEXT_INPUT' : 1080,
+    'PASSWORD_MIN_INPUT' : 8,
+    'PASSWORD_MAX_INPUT' : 16,
+}
+
 # Application definition
 
 INSTALLED_APPS = [

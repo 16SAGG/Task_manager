@@ -4,8 +4,11 @@
 
 {% block content %}
     <div class="container">
-        <div class="row justify-content-end">
-            <form action="{% url 'createStatus' %}" class="col-2">
+        <div class="row justify-content-between">
+            <div class="col-6">
+                <h3>{{myBoard.title}}</h3>
+            </div>
+            <form class="col-2" action="{% url 'createStatus' myBoard.id %}" class="col-2">
                 <button class="btn btn-dark">New Status</button>
             </form>
         </div>
@@ -14,24 +17,26 @@
     <div class="container testimonial-group">
         <div class="row text-center">
             {% for status in myStatus %}
-                <div class="col-3 card mb-4">
-                    <a href="{% url 'statusDetail' status.id %}" class="btn fw-semibold text-dark fs-4 mt-3 text-wrap text-decoration-none">
-                        {{status.title}}
-                    </a>
-                    <div class="overflow-auto">
-                        {% for task in myTasks %}
-                            {% if status.id == task.status.id %}
-                            <a href="{% url 'taskDetail' task.id %}" class="text-dark text-decoration-none">
-                                <div class="card container py-2 my-2 text-wrap">
-                                    <h3 class="fs-6 fw-normal">{{task.title}}</h3>
-                                </div>
-                            </a>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                    <hr>
-                    <a href="{% url 'createTasks' status.id %}" class="mb-3 btn">New task</a>
-                </div> 
+                {% if status.board == myBoard %}
+                    <div class="col-3 card mb-4">
+                        <a href="{% url 'statusDetail' myBoard.id status.id %}" class="btn fw-semibold text-dark fs-4 mt-3 text-wrap text-decoration-none">
+                            {{status.title}}
+                        </a>
+                        <div class="overflow-auto">
+                            {% for task in myTasks %}
+                                {% if status.id == task.status.id %}
+                                <a href="{% url 'taskDetail' myBoard.id task.id %}" class="text-dark text-decoration-none">
+                                    <div class="card container py-2 my-2 text-wrap">
+                                        <h3 class="fs-6 fw-normal">{{task.title}}</h3>
+                                    </div>
+                                </a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <hr>
+                        <a href="{% url 'createTasks' myBoard.id status.id %}" class="mb-3 btn">New task</a>
+                    </div> 
+                {% endif %}
             {% endfor %}
         </div>
     </div>

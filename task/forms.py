@@ -9,4 +9,4 @@ class TaskForm(ModelForm):
 class StatusForm(ModelForm):
     class Meta:
         model = Status
-        fields = ('title',)
+        fields = ('title', 'board',)

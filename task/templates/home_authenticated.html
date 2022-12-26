@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block title%}Home{% endblock %}
+    
+{% block content %}
+    <h3 class="m-3">Your boards</h3>
+    <hr>
+    <div class="container">
+        <div class="row justify-content-start">
+            {% for board in myBoards %}
+                <div class="col-sm-3 my-3">
+                    <a href="{% url 'tasks' board.id %}" class="btn card text-wrap text-decoration-none">
+                        <div class="card-body">
+                            <h5 class="card-title fw-semibold text-dark">{{board.title}}</h5>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
