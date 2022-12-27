@@ -46,7 +46,7 @@ class Task(models.Model):
     def clean(self, *args, **kwargs):
         super(Task, self).clean(*args, **kwargs)
         if self.deadline:
-            if self.deadline < datetime.now().date():
+            if self.deadline <= datetime.now().date():
                 raise ValueError('Deadline must be later than now.')
     
     class Meta:
