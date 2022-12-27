@@ -5,22 +5,22 @@
 {% block content %}
     <div class="container">
         <div class="row justify-content-between">
-            <div class="col-6">
-                <h3>{{myBoard.title}}</h3>
+            <div class="col-6 align-self-center">
+                <a href="{% url 'boardDetail' myBoard.id %}" class="btn fs-3 fw-semibold">{{myBoard.title}}</a>
             </div>
-            <form class="col-2" action="{% url 'createStatus' myBoard.id %}" class="col-2">
-                <button class="btn btn-dark">New Status</button>
-            </form>
+            <div class="col-2 align-self-center">
+                <a href="{% url 'createStatus' myBoard.id %}" class="btn btn-dark">New status</a>
+            </div>
         </div>
     </div>
-    <hr class="mb-4">
+    <hr>
     <div class="container testimonial-group">
         <div class="row text-center">
             {% for status in myStatus %}
                 {% if status.board == myBoard %}
                     <div class="col-3 card mb-4">
                         <a href="{% url 'statusDetail' myBoard.id status.id %}" class="btn fw-semibold text-dark fs-4 mt-3 text-wrap text-decoration-none">
-                            {{status.title}}
+                            {{status.title|truncatechars:16}}
                         </a>
                         <div class="overflow-auto">
                             {% for task in myTasks %}

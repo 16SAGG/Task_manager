@@ -9,9 +9,9 @@
                 {% csrf_token %}
                 <div class="mb-3">
                     {% if taskDetail %} <!--This code only run through taskDetail-->
-                        <input type="text" name="title" id="title" class="h1 border-0" maxlength="34" style="width: 100%;" placeholder="Untitled"; value="{{myTask.title}}">
+                        <input type="text" name="title" id="title" class="h1 border-0 w-100" maxlength="34" placeholder="Untitled"; value="{{myTask.title}}">
                         {% else %} <!--This code only run through createTask-->
-                        <input type="text" name="title" id="title" class="h1 border-0" maxlength="34" style="width: 100%;" placeholder="Untitled">
+                        <input type="text" name="title" id="title" class="h1 border-0 w-100" maxlength="34" placeholder="Untitled">
                     {% endif %}
                 </div>
                 <div class="mb-3">
@@ -72,7 +72,7 @@
                 </div>
                 <hr>
             <div class="mb-3">
-                <textarea name="description" id="description" class="fs-5 tsk-input border-0" maxlength="1080" style="width: 100%; height: 9em; resize:none;" placeholder="Description">{% if taskDetail %}{{myTask.description}}{% endif %}</textarea>
+                <textarea name="description" id="description" class="fs-5 border-0 area-input" maxlength="1080" placeholder="Description">{% if taskDetail %}{{myTask.description}}{% endif %}</textarea>
             </div>
             <hr>
             <div class="container text-center">

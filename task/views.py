@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
-from .forms import TaskForm, StatusForm
+from .forms import TaskForm, StatusForm, BoardForm
 from .models import Task, Status, Board
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -164,6 +164,58 @@ def statusDeleted(request, statusId, boardId):
     myStatus = get_object_or_404(Status, pk = statusId, user = request.user)
     myStatus.delete()
     return redirect('tasks', boardId = boardId)
+
+@login_required
+def createBoard(request):
+    ctxt = {}
+    if request.method == 'POST':
+        try:
+            form = BoardForm(request.POST)
+            newBoard = form.save(commit = False)
+            newBoard.user = request.user
+            newBoard.save()
+            statusTemplate = ['To do', 'In proccess', 'Done']
+            for statusTitle in statusTemplate:
+                status = Status.objects.create(title = statusTitle, board = newBoard, user = request.user)
+                status.save()
+            return redirect('tasks', boardId = newBoard.id)
+        except ValueError:
+            maxTitleSize = settings.GLOBAL_SETTINGS['TITLE_TEXT_INPUT']
+            if len(request.POST['title']) == 0:
+                ctxt['advice'] = "Title can't be a void value." 
+            elif len(request.POST['title']) > maxTitleSize:
+                ctxt['advice'] = 'The title max size is ' + str(maxTitleSize) + ' characters.'
+            else:
+                ctxt['advice'] = 'An error occurred.'
+    return render(request, 'create_board.html', ctxt)
+
+@login_required
+def boardDetail(request, boardId):
+    myBoard = get_object_or_404(Board, pk = boardId, user = request.user)
+    ctxt = {
+        'myBoard': myBoard,
+        'boardDetail': True
+    }
+    if request.method == 'POST':
+        try:
+            form = BoardForm(request.POST, instance = myBoard)
+            form.save()
+            return redirect('tasks', boardId = boardId)
+        except ValueError:
+            maxTitleSize = settings.GLOBAL_SETTINGS['TITLE_TEXT_INPUT']
+            if len(request.POST['title']) == 0:
+                ctxt['advice'] = "Title can't be a void value." 
+            elif len(request.POST['title']) > maxTitleSize:
+                ctxt['advice'] = 'The title max size is ' + str(maxTitleSize) + ' characters.'
+            else:
+                ctxt['advice'] = 'An error occurred.'
+    return render(request, 'create_board.html', ctxt)
+
+@login_required
+def boardDeleted(request, boardId):
+    myBoard = get_object_or_404(Board, pk = boardId, user = request.user)
+    myBoard.delete()
+    return redirect('home')
 
 @login_required
 def signout(request):

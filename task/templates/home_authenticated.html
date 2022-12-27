@@ -3,7 +3,16 @@
 {% block title%}Home{% endblock %}
     
 {% block content %}
-    <h3 class="m-3">Your boards</h3>
+    <div class="container">
+        <div class="row justify-content-between">
+            <div class="col-6 align-self-center">
+                <a href="{% url 'home' %}" class="btn fs-3 fw-semibold">Your boards</a>
+            </div>
+            <div class="col-2 align-self-center">
+                <a href="{% url 'createBoard' %}" class="btn btn-dark">New board</a>
+            </div>
+        </div>
+    </div>
     <hr>
     <div class="container">
         <div class="row justify-content-start">
