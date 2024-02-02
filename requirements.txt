@@ -11,13 +11,6 @@ filelock==3.8.0
 flet==0.3.2
 gunicorn==21.2.0
 idna==3.4
-Kivy==2.1.0
-kivy-deps.angle==0.3.3
-kivy-deps.glew==0.3.1
-kivy-deps.gstreamer==0.3.3
-kivy-deps.sdl2==0.4.5
-Kivy-examples==2.1.0
-Kivy-Garden==0.1.5
 mysql-connector-python==8.0.28
 oauthlib==3.2.2
 packaging==23.0
